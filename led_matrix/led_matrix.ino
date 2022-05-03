@@ -5,16 +5,16 @@
 #define TEXTADDR 0x01
 #define LENADDR 0x00
 
-volatile uint8_t len_mat;
-volatile uint32_t line_offset;
+volatile uint16_t len_mat;
+volatile uint16_t line_offset;
 uint8_t rcvIdx;
-uint8_t txtIdx;
+uint16_t txtIdx;
 uint8_t rcvBuff[4];
-uint8_t text[512];
+uint8_t text[1024];
 
 uint8_t counter;
 
-void print_mat(uint8_t *line, uint32_t n) {
+void print_mat(uint8_t *line, uint16_t n) {
 
   //line_offsetをずらして横に流す。timerを使うとserialに影響が出るっぽいので
   if(counter >= 63){
@@ -70,7 +70,7 @@ void setup() {
 
   //EEPROMから前回の表示内容を読み込み
   len_mat = EEPROM.read(LENADDR);
-  for (uint8_t i = 0; i < len_mat; i++) {
+  for (uint16_t i = 0; i < len_mat; i++) {
     text[i] = EEPROM.read(TEXTADDR + i);
   }
 
@@ -94,7 +94,7 @@ void loop() {
 
 
       EEPROM.write(LENADDR, len_mat);
-      for (uint8_t i = 0; i < len_mat; i++) {
+      for (uint16_t i = 0; i < len_mat; i++) {
         EEPROM.write(TEXTADDR + i, text[i]);
 
       }
