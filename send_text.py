@@ -57,9 +57,7 @@ def generate_char_matrix(char):
     matrix = matrix.tolist()
     return matrix
 
-if __name__ == "__main__":
-
-    text = str(input(""))
+def sendText(text):
 
     out_txt = ""
 
@@ -105,3 +103,9 @@ if __name__ == "__main__":
 
 
     ser.close()
+
+if __name__ == "__main__":
+
+    text = str(input(""))
+
+    sendText(text)
