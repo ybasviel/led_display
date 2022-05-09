@@ -14,3 +14,7 @@ send_text.py line 33
 ```py
     cmd = "./pbmfontgen.sh " + char + "./misakifont/misaki_gothic_2nd.ttf"
 ```
+
+# misaki font
+
+[https://littlelimit.net/font.htm](https://littlelimit.net/font.htm)
