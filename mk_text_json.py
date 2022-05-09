@@ -3,31 +3,6 @@
 import subprocess
 from sys import byteorder
 import numpy as np
-import serial
-from time import sleep
-from serial.tools import list_ports
-
-
-def select_port(baudrate=115200):
-    ser = serial.Serial(writeTimeout = 200)
-    ser.baudrate = baudrate    
-    ser.timeout = 1       # タイムアウトの時間
-
-    ports = list_ports.comports()    # ポートデータを取得
-    devices = [info.device for info in ports]
-
-    if len(devices) == 0:
-        # シリアル通信できるデバイスが見つからなかった場合
-        return None
-    else:
-        ser.port = devices[-1]
-    
-    # 開いてみる
-    try:
-        ser.open()
-        return ser
-    except:
-        return None
 
 def generate_char_matrix(char):
     cmd = "./pbmfontgen.sh " + char + " " + "./misakifont/misaki_gothic_2nd.ttf"
