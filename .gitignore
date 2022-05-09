@@ -1,4 +1,4 @@
-*.ttf
+
 out/
 *.json
 __pycache__
