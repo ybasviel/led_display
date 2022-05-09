@@ -1,7 +1,6 @@
 #!/bin/python3
 
 import subprocess
-from sys import byteorder
 import numpy as np
 
 def generate_char_matrix(char):
@@ -74,8 +73,13 @@ def makejson(text):
 
     return json
 
+def output_jsonfile(text):
+    json = makejson(text)
+    with open("data.json", "w") as f:
+        f.write(json)
+
 if __name__ == "__main__":
 
-    text = str(input(""))
+    text = str(input("> "))
 
     print(makejson(text))
