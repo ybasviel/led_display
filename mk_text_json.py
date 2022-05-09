@@ -82,4 +82,5 @@ if __name__ == "__main__":
 
     text = str(input("> "))
 
-    print(makejson(text))
+    #print(makejson(text))
+    output_jsonfile(text)
