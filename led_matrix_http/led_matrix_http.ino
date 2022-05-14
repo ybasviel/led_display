@@ -9,13 +9,15 @@
 #define SSID      "ssid"
 #define PASSWORD  "pass"
 #define URL       "json source url"
+//wifiタイムアウト時間 1/10s
+#define TIMEOUTPERIOD  50
 
 //eeprom関連
 #define TEXTADDR    0x02
 #define VERSIONADDR 0x01 //もう使ってないけど
 #define LENADDR     0x00
 
-//テキスト問い合わせ周期
+//テキスト問い合わせ周期 ms
 #define UPDATEINTERVAL 5000
 
 //SPI関連
@@ -120,11 +122,21 @@ void setup() {
 
   WiFi.begin(SSID, PASSWORD);
   Serial.print("WiFi connecting");
-  while (WiFi.status() != WL_CONNECTED) {
+  uint8_t timeout = 0;
+  while (1) {
     Serial.print(".");
     delay(100);
+    timeout++;
+
+    if(WiFi.status() == WL_CONNECTED){
+      Serial.println(" connected");
+      break;
+    }
+    else if(timeout >= TIMEOUTPERIOD){
+      Serial.println(" timeout! offline mode");
+      break;
+    }
   }
-  Serial.println(" connected");
 
 
   pinMode(SCK, OUTPUT);
