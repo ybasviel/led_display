@@ -1,11 +1,11 @@
 # About
-## send_text.py
-
-文字を入力して、生成した配列をuartで送りつける
-
-## mk_text_json.py
+## mktext.py
 
 文字を入力して、生成した配列をjsonファイルに出力
+
+### -s serialモード
+
+生成した配列をuartで送りつける
 
 # requirements
 
