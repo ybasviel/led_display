@@ -8,6 +8,7 @@ import serial
 from serial.tools import list_ports
 from unicodedata import east_asian_width
 from PIL import Image
+import json
 
 def isEastAsianChar(char): #半角英字or全角日本語
     if east_asian_width(char) in 'FWA':
@@ -67,17 +68,16 @@ def makedata(text, fontpath):
         sndmatrix += mat
         sndmatrix.append(0)
 
-    sndtxt = "["
-    for sndline in sndmatrix:
-        sndtxt += str(sndline) + ","
-    sndtxt += "0,0,0,0]"
+    sndmatrix += [0,0,0,0]
 
-    return sndtxt, len(sndmatrix)
+    return sndmatrix, len(sndmatrix)
 
 
 def sendText(text, fontpath, jsonpath):
 
-    sndtxt = makedata(text, fontpath)
+    sndmatrix = makedata(text, fontpath)[0]
+
+    sndtxt = str(sndmatrix)
 
     ser=select_port(115200)
     
@@ -92,10 +92,10 @@ def sendText(text, fontpath, jsonpath):
 
 def makeJson(text, fontpath, jsonpath):
 
-    sndtxt, lenbuff = makedata(text, fontpath)
-    json = "{\"mat_len\": " + str(lenbuff + 4 ) + ",\"data\": " + sndtxt + "}"
+    sndmatrix, lenbuff = makedata(text, fontpath)
+    jsondata = {"mat_len": lenbuff + 4, "data": sndmatrix }
     with open(jsonpath, "w") as f:
-        f.write(json)
+        json.dump(jsondata, f)
 
 
 if __name__ == "__main__":
