@@ -9,7 +9,7 @@
 
 # requirements
 
-```
+```sh
 npm install -g @akashic/bmpfont-generator
 ```
 
@@ -18,11 +18,14 @@ npm install -g @akashic/bmpfont-generator
 
 # font path
 
-send_text.py line 33
-mk_text_json.py line 7
+```sh
+./mktext.py -f "./misakifont/misaki_gothic_2nd.ttf"
+```
 
-```py
-    cmd = "./pbmfontgen.sh " + char + "./misakifont/misaki_gothic_2nd.ttf"
+# json output
+
+```sh
+./mktext.py -o "path"
 ```
 
 # misaki font
