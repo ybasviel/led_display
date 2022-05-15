@@ -3,9 +3,6 @@
 from argparse import ArgumentParser, FileType, ArgumentDefaultsHelpFormatter
 from pathlib import Path
 import subprocess
-from time import sleep
-import serial
-from serial.tools import list_ports
 from unicodedata import east_asian_width
 from PIL import Image
 
@@ -76,6 +73,9 @@ def makedata(text, fontpath):
 
 
 def sendText(text, fontpath, jsonpath):
+    from time import sleep
+    import serial
+    from serial.tools import list_ports
 
     sndtxt = makedata(text, fontpath)
 
