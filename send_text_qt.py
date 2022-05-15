@@ -1,6 +1,5 @@
 #!/bin/python3
 
-from cgitb import text
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
@@ -10,7 +9,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget,
                              QSlider, QLineEdit, 
                              QCalendarWidget, QProgressBar)
 
-import send_text
+import mktext
  
 class MainWindow(QWidget):
     def __init__(self, parent=None):
@@ -36,7 +35,7 @@ class MainWindow(QWidget):
     def sendbtn(self):
         QMessageBox.information(self, 'Sending', "Send?", QMessageBox.NoButton)
         text = self.textbox.text()
-        send_text.sendText(text)
+        mktext.sendText(text,"./misakifont/misaki_gothic_2nd.ttf", "")
         self.textbox.setText("")
         
  

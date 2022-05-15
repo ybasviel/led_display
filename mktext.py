@@ -10,6 +10,7 @@ from time import sleep
 import serial
 from serial.tools import list_ports
 from unicodedata import east_asian_width
+from PIL import Image
 
 def isEastAsianChar(char):     #文字数を英数字1, 日本語2文字でカウント
     if east_asian_width(char) in 'FWA':
@@ -43,66 +44,38 @@ def generate_char_matrix(char, fontpath):
     cmd = "./pbmfontgen.sh " + char + " " + str(fontpath)
     subprocess.run(cmd, shell=True)
 
-    with open("./out/char.pbm") as f:
-        pbm = f.readlines()
-        
-    del(pbm[:2])
-    #print(pbm)
-    
-    matrix = []
+    if(isEastAsianChar(char)):
+        charwidth = 8
+    else:
+        charwidth = 4
 
-    for line in pbm:
-        line = line.replace(" ", "")
-        
-        newline = []
+    im = Image.open("./out/char.png")
+    matrix = [0] * charwidth
+    for x in range(charwidth):
+        for y in range(8):
+            if(im.getpixel((x,y))[3] >= 128):
+                matrix[x] += 2**y
+            else:
+                pass
 
-        for i in range(8):
-            newline.append(line[i])
-        
-        matrix.append(newline)
-
-    matrix = np.array(matrix)
-
-    matrix = matrix.T
-    matrix = matrix.tolist()
     return matrix
 
 def makedata(text, fontpath):
 
-    out_txt = ""
+    sndmatrix = []
 
     for char in text:
         mat = generate_char_matrix(char, fontpath)
-        
-        if(isEastAsianChar(char) == False):
-            mat = mat[:4]
 
-        for line in mat:
-            line.reverse()
-
-            for ch in line:
-                out_txt += str(ch)
-            
-            out_txt += "\n"
-
-        out_txt += "00000000\n"
-
-    bitarry = out_txt.splitlines()
-
-    sndBuff = []
-    
-    for bit in bitarry:
-        sndBuff.append(int(bit, 2))
-
-
+        sndmatrix += mat
+        sndmatrix.append(0)
 
     sndtxt = "["
-    for snd in sndBuff:
-        sndtxt += str(snd) + ","
-    
+    for sndline in sndmatrix:
+        sndtxt += str(sndline) + ","
     sndtxt += "0,0,0,0]"
 
-    return sndtxt, len(sndBuff)
+    return sndtxt, len(sndmatrix)
 
 
 def sendText(text, fontpath, jsonpath):
@@ -117,8 +90,6 @@ def sendText(text, fontpath, jsonpath):
     sleep(2)
 
     ser.write(bytes(sndtxt, "ASCII"))
-
-
     ser.close()
 
 
