@@ -3,9 +3,6 @@
 from argparse import ArgumentParser, FileType, ArgumentDefaultsHelpFormatter
 from pathlib import Path
 import subprocess
-from sys import byteorder
-from xmlrpc.client import boolean
-import numpy as np
 from time import sleep
 import serial
 from serial.tools import list_ports
