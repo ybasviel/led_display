@@ -9,7 +9,7 @@ from serial.tools import list_ports
 from unicodedata import east_asian_width
 from PIL import Image
 
-def isEastAsianChar(char):     #文字数を英数字1, 日本語2文字でカウント
+def isEastAsianChar(char): #半角英字or全角日本語
     if east_asian_width(char) in 'FWA':
         return True
     else:
