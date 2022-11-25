@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from generate import getJSON
+from app.generate import getJSON
 
 app = FastAPI()
 
@@ -13,13 +13,13 @@ def returnJSON(text:str):
 
 data = {}
 
-@app.get("/json/set/{text}")
+@app.post("/json/{text}")
 def setData(text:str):
   global data
   data = getJSON(text)
   return "OK"
 
-@app.get("/json/get")
+@app.get("/json")
 def getData():
   global data
   return data

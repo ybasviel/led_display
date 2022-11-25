@@ -1,11 +1,13 @@
 from PIL import Image, ImageFont
-from openlocationcode import openlocationcode as olc
+import unicodedata
 
+def len_fullwidth(text):
+    return -(-sum([(1, 2)[unicodedata.east_asian_width(t) in 'FWA'] for t in text])//2)
 
 def getJSON(message):
-  img = Image.new('L', (len(message)*8, 8), color=0)
+  img = Image.new('L', (len_fullwidth(message)*8, 8), color=0)
   img_w, img_h = img.size
-  font = ImageFont.truetype('../misakifont/misaki_gothic.ttf', 8)
+  font = ImageFont.truetype('/code/app/font/misaki_gothic.ttf', 8)
   mask = font.getmask(message)
   mask_w, mask_h = img.size
   d = Image.core.draw(img.im, 0)
