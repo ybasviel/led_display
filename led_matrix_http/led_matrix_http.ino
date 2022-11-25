@@ -6,9 +6,9 @@
 #include <ArduinoJson.h>
 
 //wifi関連
-#define SSID      "ssid"
-#define PASSWORD  "pass"
-#define URL       "json source url"
+#define SSID      ""
+#define PASSWORD  ""
+#define URL       ""
 //wifiタイムアウト時間 1/10s
 #define TIMEOUTPERIOD  50
 
