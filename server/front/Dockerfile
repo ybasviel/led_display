@@ -3,7 +3,8 @@ FROM node:16-alpine3.14
 WORKDIR /app
 
 COPY . /app
-RUN yarn generate
+RUN yarn install
+RUN yarn build
 
 CMD ["yarn", "start"]
 
