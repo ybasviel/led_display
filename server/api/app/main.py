@@ -5,8 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
+    "http://localhost",
     "http://localhost:3000",
-    "https://lcd.home.k1h.dev"
+    "https://lcd.home.k1h.dev",
+    "http://lcd.home.k1h.dev"
 ]
 
 app.add_middleware(
