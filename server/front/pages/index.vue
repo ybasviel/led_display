@@ -1,9 +1,15 @@
 <template>
 <div>
+  <div class="container-fluid">
   <h1>Koken電光掲示板</h1>
-  <p v-html="str"></p>
-  <input type="text" v-model="input">
-  <button @click="send">送信</button>
+  <p v-html="str" class="output-field"></p>
+  <form>
+  <div class="mb-3">
+    <input type="text" v-model="input" class="form-control">
+    </div>
+    <button class="btn btn-success" @click="send">送信</button>
+  </form>
+  </div>
 </div>
 </template>
 
@@ -41,9 +47,9 @@ export default Vue.extend({
       let cal = 1 << j;
       for(i=0;i<data.data.length;i++){
         if(data.data[i]&cal){
-          this.str+="●";
+          this.str+='<span class="r-dot">●</span>';
         }else{
-          this.str+="○";
+          this.str+='<span class="r-white">●</span>';
         }
       }
       this.str+="<br>";
@@ -60,4 +66,18 @@ export default Vue.extend({
 body{
 font-family:monospace;
 }
+.output-field{
+  background:#201010;
+  padding: 1rem;
+  overflow-x: scroll;
+  letter-spacing: 0.1em;
+}
+.r-dot{
+  color: #ed5641;
+  border-radius: 30px;
+}
+.r-white{
+  color: #455151;
+}
+
 </style>

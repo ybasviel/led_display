@@ -1,5 +1,4 @@
 out/
-*.json
 __pycache__
 .DS_Store
 misakifont/PixelMplus12-Regular.ttf
