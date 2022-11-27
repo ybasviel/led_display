@@ -24,7 +24,7 @@ export default Vue.extend({
       if(this.input==""){
         alert("Input something!");
       }
-      const data = (await axios.post(`http://localhost:8000/json/${this.input}`));
+      const data = (await axios.post(`http://apilcd.home.k1h.dev/json/${this.input}`));
       if(data.status==200){
         console.log("OK")
         this.update();
@@ -34,7 +34,7 @@ export default Vue.extend({
     },
     async update(){
       this.str="";
-    const data = (await axios.get("http://localhost:8000/json")).data;
+    const data = (await axios.get("http://apilcd.home.k1h.dev/json")).data;
     let lcdOutput:number[] = new Array();
     let i:number,j:number;
     for(j=0;j<8;j++){
