@@ -27,7 +27,7 @@ def hello():
 def returnJSON(text:str):
   return getJSON(text)
 
-data = {}
+data = getJSON("ようこそ工学研究部へ！ Twitter:@ueckoken")
 
 @app.post("/json/{text}")
 def setData(text:str):
