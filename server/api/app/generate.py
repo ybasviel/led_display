@@ -1,5 +1,6 @@
 from PIL import Image, ImageFont
 import unicodedata
+import datetime
 
 def len_fullwidth(text):
     return -(-sum([(1, 2)[unicodedata.east_asian_width(t) in 'FWA'] for t in text])//2)
@@ -21,4 +22,4 @@ def getJSON(message):
           else:
             img.putpixel((j,i), 0)
   # img.show()
-  return {"mat_len": mask_w + 4, "data": buff }
+  return {"mat_len": mask_w + 4, "data": buff, "updated": datetime.datetime.now()}
