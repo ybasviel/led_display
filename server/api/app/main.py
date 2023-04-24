@@ -7,8 +7,8 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "https://lcd.home.k1h.dev",
-    "http://lcd.home.k1h.dev"
+    "https://led.ueckoken.club/",
+    "http://led.ueckoken.club/"
 ]
 
 app.add_middleware(
