@@ -1,37 +1,32 @@
 #include <SPI.h>
-
-#define UART_INT 5
-
-
-#define RCV_BUFF_LEN 1024
+#include <EEPROM.h>
 
 
-//表示テキスト情報
+#define TEXTADDR 0x01
+#define LENADDR 0x00
+
 volatile uint16_t len_mat;
-volatile uint8_t text[RCV_BUFF_LEN];
+volatile uint16_t line_offset;
+uint8_t rcvIdx;
+uint16_t txtIdx;
+uint8_t rcvBuff[4];
+uint8_t text[1024];
 
-uint16_t line_offset;
 uint8_t counter;
 
+void print_mat(uint8_t *line, uint16_t n) {
 
-void setup() {
-  Serial.begin(115200);
-
-  attachInterrupt(UART_INT, uart_int, LOW);
-
-  pinMode(UART_INT, INPUT_PULLUP);
-}
-
-void loop() {
-
-
-  line_offset = (line_offset + 1) % len_mat;
-
+  //line_offsetをずらして横に流す。timerを使うとserialに影響が出るっぽいので
+  if(counter >= 63){
+    line_offset = (line_offset+1) % len_mat;
+    counter = 0;
+  }
+  counter++;
+  
   for (uint8_t i = 0 ; i < 24 ; i++) {
     digitalWrite(SS, LOW);
-    delay(2);
 
-    if (i < 8) //ここもっといい書き方ないかな
+    if (i < 8)
     {
       SPI.transfer( 1 << i );
       SPI.transfer(0);
@@ -48,28 +43,77 @@ void loop() {
       SPI.transfer(0);
       SPI.transfer( 1 << (i - 16) );
     }
-    SPI.transfer( text[(i + line_offset) % len_mat ]);
+    SPI.transfer( line[(i + line_offset) % n ]);
 
     digitalWrite(SS, HIGH);
   }
+}
 
+
+
+void setup() {
+  //いろいろリセット
+  txtIdx = 0;
+  rcvIdx = 0;
+  counter = 0;
+
+  
+  SPI.begin() ;                         // ＳＰＩを行う為の初期化
+  SPI.setBitOrder(MSBFIRST) ;           // ビットオーダー
+  SPI.setClockDivider(SPI_CLOCK_DIV16) ;// クロックをシステムクロックの1/16で使用(16MHz/16)
+  SPI.setDataMode(SPI_MODE0) ;          // クロック極性０(LOW)　クロック位相０(LOW)
+  digitalWrite(SS, LOW) ;               // SS(CS)ラインをLOWにする
+
+  delay(3000) ; // 3S後開始
+
+  Serial.begin(115200);
+
+  //EEPROMから前回の表示内容を読み込み
+  len_mat = EEPROM.read(LENADDR);
+  for (uint16_t i = 0; i < len_mat; i++) {
+    text[i] = EEPROM.read(TEXTADDR + i);
+  }
 
 }
 
-void uart_int(){
-  len_mat = 0;
-  
-  while ( digitalRead(UART_INT) == LOW ) {
+void loop() {
 
-    if (Serial.available()) {
-      text[len_mat] = Serial.read();
+  //Serial処理
+  while (Serial.available() > 0) {
+    uint8_t Buff = Serial.read();
 
-      if (len_mat >= RCV_BUFF_LEN) {
-        while( digitalRead(UART_INT) == LOW ){}
-        break;
-      } else {
-        len_mat++;
+    if (Buff == ']') {
+      rcvBuff[rcvIdx] = '\0';
+      rcvIdx = 0;
+
+      text[txtIdx++] = atoi( (char *)rcvBuff );
+
+
+      len_mat = txtIdx;
+      txtIdx = 0;
+
+
+      EEPROM.write(LENADDR, len_mat);
+      for (uint16_t i = 0; i < len_mat; i++) {
+        EEPROM.write(TEXTADDR + i, text[i]);
+
       }
+
+      counter = 0;
+    }
+    else if (Buff == ',') {
+      rcvBuff[rcvIdx] = '\0';
+      rcvIdx = 0;
+
+      text[txtIdx++] = atoi( (char *)rcvBuff );
+    }
+    else if (Buff == '[' || Buff == '\n' || Buff == '\r') ;
+    else {
+      rcvBuff[rcvIdx++] = Buff;
     }
   }
+
+
+  print_mat((uint8_t *)text, len_mat);
+
 }
