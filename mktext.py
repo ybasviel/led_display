@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 
 from argparse import ArgumentParser, FileType, ArgumentDefaultsHelpFormatter
 from pathlib import Path
