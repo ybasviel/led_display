@@ -82,9 +82,6 @@ void setup() {
   WiFi.begin(SSID, PASSWORD);
   Serial.print("WiFi connecting");
   uint8_t timeout = 0;
-
-  //display.content.data = (uint8_t*)searchWifi;
-  //display.content.len = 148;
   
   
   while (1) {
@@ -95,8 +92,6 @@ void setup() {
     if (WiFi.status() == WL_CONNECTED) {
       Serial.println(" connected");
       
-      //display.content.data = (uint8_t*)onlineMode;
-      //display.content.len = 84;
       display.content = &onlineMode;
       
       break;
@@ -104,8 +99,6 @@ void setup() {
     else if (timeout >= TIMEOUTPERIOD) {
       Serial.println(" timeout! offline mode");
       
-      //display.content.data = (uint8_t*)offlineMode;
-      //display.content.len = 92;
       display.content = &offlineMode;
 
       break;
