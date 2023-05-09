@@ -3,39 +3,30 @@
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
 
-HardwareSerial uart(2);
+#include "LedDisplay.h"
+#include "debugMsg.h"
 
-//wifi関連
+
+// wifi関連
 #define SSID      "ssid"
 #define PASSWORD  "password"
 #define URL       "url"
 
-//wifiタイムアウト時間 1/10s
-#define TIMEOUTPERIOD  50
+// wifiタイムアウト時間 1/10s
+#define TIMEOUTPERIOD  100
 
-//テキスト問い合わせ周期 ms
+// テキスト問い合わせ周期 ms
 #define UPDATEINTERVAL 5000
 
-
-//表示テキスト情報
-uint16_t len_mat;
-uint8_t text[1024];
-
+// Json Buffer
 JSONVar doc;
 
 
-void display() {
-  delay(100);
-  uart.print("[");
-  for (uint16_t i = 0; i < len_mat; i++) {
-    uart.print(text[i]);
-    uart.print(",");
-  }
-  uart.print("]");
-}
+// Led Display Driver
+LedDisplay display;
 
 
-//サーバー問い合わせ
+// サーバー問い合わせ
 void checkTextServer() {
 
   HTTPClient http;
@@ -44,6 +35,7 @@ void checkTextServer() {
 
   Serial.printf("Response: %d", httpCode);
   Serial.println();
+
   if (httpCode == HTTP_CODE_OK) {
     String body = http.getString();
     Serial.print("Response Body: ");
@@ -54,14 +46,14 @@ void checkTextServer() {
     boolean isChanged = false;
 
 
-    if ( len_mat != (int)doc["mat_len"]) {
-      len_mat = (int)doc["mat_len"];
+    if ( display.content->len != (uint16_t)doc["mat_len"]) {
+      display.content->len = (uint16_t)doc["mat_len"];
       isChanged = true;
     }
 
-    for (uint16_t i = 0; i < len_mat; i++) {
-      if (text[i] != (int)doc["data"][i]) {
-        text[i] = doc["data"][i];
+    for (uint16_t i = 0; i < display.content->len; i++) {
+      if (display.content->data[i] != (uint8_t)doc["data"][i]) {
+        display.content->data[i] = doc["data"][i];
         isChanged = true;
       }
     }
@@ -69,7 +61,7 @@ void checkTextServer() {
     //変更があればdisplayに反映
     if (isChanged == true) {
       Serial.println("send");
-      display();
+      display.send();
       isChanged = false;
     }
   }
@@ -81,12 +73,20 @@ void checkTextServer() {
 
 void setup() {
   Serial.begin(115200);
-  uart.begin(115200);
 
+  delay(1000);
+  display.content = &searchWifi;
+  display.send();
+  delay(1000);
 
   WiFi.begin(SSID, PASSWORD);
   Serial.print("WiFi connecting");
   uint8_t timeout = 0;
+
+  //display.content.data = (uint8_t*)searchWifi;
+  //display.content.len = 148;
+  
+  
   while (1) {
     Serial.print(".");
     delay(100);
@@ -94,19 +94,30 @@ void setup() {
 
     if (WiFi.status() == WL_CONNECTED) {
       Serial.println(" connected");
+      
+      //display.content.data = (uint8_t*)onlineMode;
+      //display.content.len = 84;
+      display.content = &onlineMode;
+      
       break;
     }
     else if (timeout >= TIMEOUTPERIOD) {
       Serial.println(" timeout! offline mode");
+      
+      //display.content.data = (uint8_t*)offlineMode;
+      //display.content.len = 92;
+      display.content = &offlineMode;
+
       break;
     }
   }
 
-  delay(3000) ;
+  display.send();
+  delay(4500);
+  display.content = &display.getContentBuffer;
 }
 
 void loop() {
-
   checkTextServer();
   delay(UPDATEINTERVAL);
 }
